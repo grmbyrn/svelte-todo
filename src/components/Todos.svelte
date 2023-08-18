@@ -3,6 +3,7 @@
 
   import AddTodo from './AddTodo.svelte';
   import Todo from './Todo.svelte'
+  import TodosLeft from './TodosLeft.svelte';
 
   // state
   let todos: ITodo[] = [
@@ -17,6 +18,7 @@
 
   // computed
   $: todosAmount = todos.length
+  $: incompleteTodos = todos.filter(todo => !todo.completed).length
 
   //methods
   function generateRandomId(): string {
@@ -53,6 +55,11 @@
   function removeTodo(id: string): void{
     todos = todos.filter(todo => todo.id !== id)
   }
+
+  function editTodo(id: string, newTodo: string): void{
+    let currentTodo = todos.findIndex(todo => todo.id === id)
+    todos[currentTodo].text = newTodo
+  }
 </script>
 
 <main>
@@ -63,12 +70,12 @@
         {#if todosAmount}
         <ul class="todo-list">
           {#each todos as todo (todo.id)}
-            <Todo {todo} {completeTodo} {removeTodo} />
+            <Todo {todo} {completeTodo} {removeTodo} {editTodo} />
           {/each}
         </ul>
 
         <div class="actions">
-            <span class="todo-count">0 left</span>
+            <TodosLeft {incompleteTodos} />
             <div class="filters">
                 <button class="filter">All</button>
                 <button class="filter">Active</button>
