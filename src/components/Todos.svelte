@@ -1,4 +1,6 @@
 <script lang='ts'>
+  import {tick} from 'svelte'
+
   import type {FiltersType, ITodo} from '../types/todo'
   import {useStorage} from '../stores/useStorage'
 
@@ -12,6 +14,7 @@
   let todos = useStorage<ITodo[]>('todos', [])
 
   let selectedFilter: FiltersType = 'all'
+  let filtering = false
 
   // debug
   $: console.log(todos)
@@ -21,6 +24,9 @@
   $: incompleteTodos = $todos.filter(todo => !todo.completed).length
   $: filteredTodos = filterTodos($todos, selectedFilter)
   $: completedTodos = $todos.filter(todo => todo.completed).length
+  $: duration = filtering ? 0 : 250
+
+  $: console.log(duration)
 
   //methods
   function generateRandomId(): string {
@@ -63,8 +69,12 @@
     todos[currentTodo].text = newTodo
   }
 
-  function setFilter(newFilter: FiltersType): void{
+  async function setFilter(newFilter: FiltersType): Promise<void>{
+    filtering = true
+    await tick()
     selectedFilter = newFilter
+    await tick()
+    filtering = false
   }
 
   function filterTodos(todos: ITodo[], filter: FiltersType): ITodo[]{
@@ -91,7 +101,7 @@
         {#if todosAmount}
         <ul class="todo-list">
           {#each filteredTodos as todo (todo.id)}
-            <Todo {todo} {completeTodo} {removeTodo} {editTodo} />
+            <Todo {todo} {completeTodo} {removeTodo} {editTodo} {duration} />
           {/each}
         </ul>
 
