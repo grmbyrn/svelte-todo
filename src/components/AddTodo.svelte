@@ -18,7 +18,6 @@
 <form on:submit|preventDefault={handleSubmit}>
     {#if todosAmount > 0}
     <input
-        bind:value={todo}
         on:click={toggleCompleted}
         type="checkbox"
         id="toggle-all"
@@ -31,6 +30,7 @@
 
     <!-- svelte-ignore a11y-autofocus -->
     <input
+        bind:value={todo}
         type="text" 
         id="new-todo" 
         class="new-todo" 
